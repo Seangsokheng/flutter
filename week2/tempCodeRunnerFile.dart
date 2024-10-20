@@ -1,1 +1,1 @@
-color
+emp1.printDetails();
