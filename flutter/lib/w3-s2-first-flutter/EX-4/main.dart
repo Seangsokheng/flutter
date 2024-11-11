@@ -18,7 +18,7 @@ void main() {
             ),
             text: "Flutter"),
         ],
-      ),
+      )
     ),
   ));
 }

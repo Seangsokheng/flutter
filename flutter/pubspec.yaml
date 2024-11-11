@@ -63,6 +63,9 @@ flutter:
   assets:
     - assets/myImage/
     - assets/w4-s1-ex/
+    - assets/
+    - assets/w4-s2/
+    
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
