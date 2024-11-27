@@ -8,37 +8,30 @@ import 'package:flutter/material.dart';
    
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blue, 
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.question_mark, 
-              size: 100,
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset('assets/microProject2/quiz-logo.png', width: 300),
+          const SizedBox(height: 40),
+          Text(
+            quizTitle,
+            style:const TextStyle(
               color: Colors.white,
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
             ),
-            const SizedBox(height: 20),  
-            Text(
-              quizTitle, 
-              style: const TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+          ),
+          const SizedBox(height: 40),
+          OutlinedButton.icon(
+            onPressed: onStart,
+            style: OutlinedButton.styleFrom(
+              backgroundColor: Colors.white,
             ),
-            const SizedBox(height: 40), 
-
-            ElevatedButton.icon(
-              onPressed: onStart, 
-              icon: const Icon(Icons.arrow_forward, color: Colors.white),
-              label:const Text(
-                "Start Quiz",
-              ),
-            ),
-          ],
-        ),
+            icon: const Icon(Icons.arrow_right_alt),
+            label: const Text('Start Quiz'),
+          ),
+        ],
       ),
     );
   }

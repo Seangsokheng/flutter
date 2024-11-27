@@ -65,6 +65,7 @@ flutter:
     - assets/w4-s1-ex/
     - assets/
     - assets/w4-s2/
+    - assets/microProject2/
     
 
   # An image asset can refer to one or more resolution-specific "variants", see
