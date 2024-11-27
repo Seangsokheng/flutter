@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:week3/w7/micro-project2/model/submission.dart';
 import 'package:week3/w7/micro-project2/screens/question_screen.dart';
 import 'package:week3/w7/micro-project2/screens/result_screen.dart';
 import 'package:week3/w7/micro-project2/screens/welcome_screen.dart';
@@ -24,36 +25,55 @@ class QuizApp extends StatefulWidget {
 
 class _QuizAppState extends State<QuizApp> {
   QuizState currentScreen = QuizState.notStart;
+  int currentQuestionIndex = 0;
+  Submission submission = Submission(answers: []);
 
-  void switchScreen() {
+  // void switchScreen() {
+  //   setState(() {
+  //     switch (currentScreen) {
+  //       case QuizState.notStart:
+  //         currentScreen = QuizState.started;
+  //         break;
+  //       case QuizState.started:
+  //         currentScreen = QuizState.finished;
+  //         break;
+  //       case QuizState.finished:
+  //         currentScreen = QuizState.notStart;
+  //         break;
+  //     }
+  //   });
+  // }
+
+  void startQuiz() {
     setState(() {
-      switch (currentScreen) {
-        case QuizState.notStart:
-          currentScreen = QuizState.started;
-          break;
-        case QuizState.started:
-          currentScreen = QuizState.finished;
-          break;
-        case QuizState.finished:
-          currentScreen = QuizState.notStart;
-          break;
+      currentScreen = QuizState.started;
+      currentQuestionIndex = 0;
+    });
+  }
+
+  void onTop(choice) {
+    setState(() {
+      submission.answers.add(choice);
+      if (currentQuestionIndex < widget.quiz.questions.length) {
+        currentQuestionIndex++;
+      } else {
+        currentScreen = QuizState.finished;
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget screens = Text("unknow screen");
-    ;
+    Widget screens = const Text("unknow screen");
 
     if (currentScreen == QuizState.notStart) {
-      screens = WelcomeScreen(quizTitle: "Crazy Quiz", onStart: switchScreen);
+      screens = WelcomeScreen(quizTitle: "Crazy Quiz", onStart: startQuiz);
     } else if (currentScreen == QuizState.started) {
-      screens = QuestionScreen();
+      screens = QuestionScreen(onTap: onTop, question: widget.quiz.questions[currentQuestionIndex]);
     } else if (currentScreen == QuizState.finished) {
       screens = ResultScreen();
     } else {
-      Text("unknow screen");
+      const Text("unknow screen");
     }
 
     return MaterialApp(
