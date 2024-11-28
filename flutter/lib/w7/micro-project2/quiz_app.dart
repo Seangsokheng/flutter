@@ -51,13 +51,16 @@ class _QuizAppState extends State<QuizApp> {
     });
   }
 
-  void onTop(choice) {
+  void answerQuestion(String choice) {
     setState(() {
-      submission.answers.add(choice);
-      if (currentQuestionIndex < widget.quiz.questions.length) {
-        currentQuestionIndex++;
-      } else {
+      submission.addAnswer(
+        widget.quiz.questions[currentQuestionIndex], 
+        choice, 
+      );
+       if (currentQuestionIndex == widget.quiz.questions.length - 1) {
         currentScreen = QuizState.finished;
+      } else {
+        currentQuestionIndex++;
       }
     });
   }
@@ -69,7 +72,7 @@ class _QuizAppState extends State<QuizApp> {
     if (currentScreen == QuizState.notStart) {
       screens = WelcomeScreen(quizTitle: "Crazy Quiz", onStart: startQuiz);
     } else if (currentScreen == QuizState.started) {
-      screens = QuestionScreen(onTap: onTop, question: widget.quiz.questions[currentQuestionIndex]);
+      screens = QuestionScreen(onTap: answerQuestion, question: widget.quiz.questions[currentQuestionIndex]);
     } else if (currentScreen == QuizState.finished) {
       screens = ResultScreen();
     } else {

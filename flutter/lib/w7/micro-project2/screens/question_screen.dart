@@ -29,7 +29,7 @@ class QuestionScreen extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () => onTap(answer),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue[300],
+                    backgroundColor: const Color.fromARGB(255, 9, 143, 233),
                     foregroundColor: Colors.white,
                   ),
                   child: Text(answer),
