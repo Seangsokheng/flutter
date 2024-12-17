@@ -74,7 +74,10 @@ class _NewItemState extends State<NewItem> {
                     child: const Text('Reset'),
                   ),
                   ElevatedButton(
-                    onPressed: () => {},
+                    onPressed: () {
+
+                  Navigator.pop(context, 'Yep!');
+                },
                     child: const Text('Add Item'),
                   )
                 ],

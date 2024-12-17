@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:week3/w9/w9-s2/1%20-%20Code%20Grocery%20-%20Start/widgets/new_item.dart';
+import 'package:week3/lecture/w9/w9-s2/1%20-%20Code%20Grocery%20-%20Start/widgets/new_item.dart';
 import '../data/dummy_items.dart';
 
 class GroceryList extends StatefulWidget {

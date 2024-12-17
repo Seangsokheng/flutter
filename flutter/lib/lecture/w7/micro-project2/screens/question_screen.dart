@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:week3/w7/micro-project2/model/quiz.dart';
+import 'package:week3/lecture/w7/micro-project2/model/quiz.dart';
 
 class QuestionScreen extends StatelessWidget {
   final void Function (String choice) onTap;

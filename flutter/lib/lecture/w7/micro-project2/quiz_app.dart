@@ -1,9 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:week3/w7/micro-project2/model/submission.dart';
-import 'package:week3/w7/micro-project2/screens/question_screen.dart';
-import 'package:week3/w7/micro-project2/screens/result_screen.dart';
-import 'package:week3/w7/micro-project2/screens/welcome_screen.dart';
+import 'package:week3/lecture/w7/micro-project2/model/submission.dart';
+import 'package:week3/lecture/w7/micro-project2/screens/question_screen.dart';
+import 'package:week3/lecture/w7/micro-project2/screens/result_screen.dart';
+import 'package:week3/lecture/w7/micro-project2/screens/welcome_screen.dart';
 import 'model/quiz.dart';
 
 Color appColor = Colors.blue[500] as Color;
