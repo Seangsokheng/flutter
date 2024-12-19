@@ -10,7 +10,7 @@ class Event {
   final DateTime date;
   final String time;
   final String location;
-  final String imagePath;
+  String imagePath;
   final Uint8List? imageBytes;
   bool isJoined;
 

@@ -47,11 +47,31 @@ class _CreateEventPageState extends State<CreateEventPage> {
       _timeController.text = item.time;
       _locationController.text = item.location;
       _selectedCategory = item.category;
-      if (item.imagePath.isNotEmpty) {
-        _image = File(item.imagePath);
+      if (kIsWeb) {
+        _imageBytes = item.imageBytes;
+      } else {
+        if (item.imagePath.isNotEmpty &&
+            !item.imagePath.startsWith('/images')) {
+          try {
+            _image = File(item.imagePath);
+          } catch (e) {
+            debugPrint('Error loading image file: $e');
+          }
+        }
+        if (item.imageBytes != null) {
+          _imageBytes = item.imageBytes;
+        }
       }
-      _imageBytes = item.imageBytes;
     }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descriptionController.dispose();
+    _locationController.dispose();
+    _timeController.dispose();
+    super.dispose();
   }
 
   Future<void> _selectDated() async {
@@ -88,8 +108,25 @@ class _CreateEventPageState extends State<CreateEventPage> {
     }
   }
 
+  void _removeImage() {
+    setState(() {
+      _image = null;
+      _imageBytes = null;
+      if (widget.initialItem != null) {
+        widget.initialItem!.imagePath = ''; // Clear the asset path if it exists
+      }
+    });
+  }
+
   void _saveEvent() {
     if (_formKey.currentState!.validate()) {
+      if (_image == null && _imageBytes == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please upload an image for the event')),
+        );
+        return;
+      }
+
       final newEvent = Event(
         id: widget.initialItem?.id ?? uuid.v1(),
         name: _nameController.text,
@@ -150,6 +187,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
                         ),
                       ),
                       maxLines: 3,
+                      validator: (value) =>
+                          value!.isEmpty ? 'Description is required' : null,
                     ),
                     const SizedBox(height: 12),
 
@@ -180,6 +219,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
+                      validator: (value) =>
+                          value!.isEmpty ? 'Time is required' : null,
                     ),
                     const SizedBox(height: 12),
 
@@ -192,6 +233,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
+                      validator: (value) =>
+                          value!.isEmpty ? 'Location is required' : null,
                     ),
                     const SizedBox(height: 12),
 
@@ -215,17 +258,41 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     ),
                     const SizedBox(height: 16),
 
-                    // Image Picker
-                    _image != null
-                        ? Image.file(_image!, fit: BoxFit.cover, height: 200)
-                        : (_imageBytes != null
-                            ? Image.memory(_imageBytes!,
-                                fit: BoxFit.cover, height: 200)
-                            : TextButton.icon(
-                                onPressed: _pickImage,
-                                icon: const Icon(Icons.image),
-                                label: const Text('Pick Event Image'),
-                              )),
+                    // Image Picker with Cancel Option
+                    // Image Picker with Cancel Option
+                    _image != null ||
+                            _imageBytes != null ||
+                            (widget.initialItem?.imagePath
+                                    .startsWith('/images') ??
+                                false)
+                        ? Column(
+                            children: [
+                              if (_image != null)
+                                Image.file(_image!,
+                                    fit: BoxFit.cover, height: 200)
+                              else if (_imageBytes != null)
+                                Image.memory(_imageBytes!,
+                                    fit: BoxFit.cover, height: 200)
+                              else if (widget.initialItem?.imagePath
+                                      .startsWith('/images') ??
+                                  false)
+                                Image.asset(
+                                  widget.initialItem!.imagePath,
+                                  fit: BoxFit.cover,
+                                  height: 200,
+                                ),
+                              TextButton.icon(
+                                onPressed: _removeImage,
+                                icon: const Icon(Icons.delete),
+                                label: const Text('Remove Image'),
+                              ),
+                            ],
+                          )
+                        : TextButton.icon(
+                            onPressed: _pickImage,
+                            icon: const Icon(Icons.image),
+                            label: const Text('Pick Event Image'),
+                          ),
                     const SizedBox(height: 16),
 
                     // Save Button
@@ -238,7 +305,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
                         ),
                       ),
                       child: Text(
-                        widget.mode == Mode.create ? 'Create Event' : 'Save Event',
+                        widget.mode == Mode.create
+                            ? 'Create Event'
+                            : 'Save Event',
                         style: const TextStyle(fontSize: 18),
                       ),
                     ),
