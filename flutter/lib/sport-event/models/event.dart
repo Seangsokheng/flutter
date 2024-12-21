@@ -12,6 +12,7 @@ class Event {
   final String location;
   String imagePath;
   final Uint8List? imageBytes;
+  String price;
   bool isJoined;
 
   Event({
@@ -22,6 +23,7 @@ class Event {
     required this.date,
     required this.time,
     required this.location,
+    required this.price,
     this.imagePath = '',
     this.imageBytes,
     this.isJoined = false,

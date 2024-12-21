@@ -44,6 +44,19 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void _toggleJoin(Event event) {
+    setState(() {
+      event.toggleJoin();
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+            event.isJoined ? 'Joined event!' : 'Removed from joined events'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
   void _deleteEvent(Event event, int index) {
     setState(() {
       Events.remove(event);
@@ -66,7 +79,8 @@ class _HomePageState extends State<HomePage> {
 
   List<Event> get _filteredEvents {
     if (_selectedCategory == null) return Events;
-    return Events.where((event) => event.category == _selectedCategory).toList();
+    return Events.where((event) => event.category == _selectedCategory)
+        .toList();
   }
 
   @override
@@ -77,7 +91,6 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
@@ -128,7 +141,8 @@ class _HomePageState extends State<HomePage> {
                         icon: category.icon,
                         label: category.label,
                         isSelected: _selectedCategory == category,
-                        onTap: () => setState(() => _selectedCategory = category),
+                        onTap: () =>
+                            setState(() => _selectedCategory = category),
                       )),
                 ],
               ),
@@ -148,10 +162,11 @@ class _HomePageState extends State<HomePage> {
                       itemCount: _filteredEvents.length,
                       itemBuilder: (context, index) => EventCard(
                         event: _filteredEvents[index],
-                        onEdit: () =>
-                            _addEvent(context, Mode.edit, _filteredEvents[index]),
+                        onEdit: () => _addEvent(
+                            context, Mode.edit, _filteredEvents[index]),
                         onDelete: () =>
                             _deleteEvent(_filteredEvents[index], index),
+                        onJoinToggle: () => _toggleJoin(_filteredEvents[index]),
                       ),
                     ),
             ),
@@ -227,12 +242,14 @@ class EventCard extends StatelessWidget {
   final Event event;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
+  final VoidCallback? onJoinToggle;
 
   const EventCard({
     super.key,
     required this.event,
     required this.onEdit,
     required this.onDelete,
+    this.onJoinToggle,
   });
 
   Widget _buildImage(Event event) {
@@ -295,6 +312,31 @@ class EventCard extends StatelessWidget {
                 ),
               ),
               Positioned(
+                top: 16,
+                right: 16,
+                child: ElevatedButton.icon(
+                  onPressed: onJoinToggle,
+                  icon: Icon(
+                    event.isJoined ? Icons.check : Icons.add,
+                    color: event.isJoined ? Colors.white : Colors.deepOrange,
+                    size: 18,
+                  ),
+                  label: Text(
+                    event.isJoined ? 'Joined' : 'Join',
+                    style: TextStyle(
+                      color: event.isJoined ? Colors.white : Colors.deepOrange,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: event.isJoined ? Colors.deepOrange : Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
                 bottom: 16,
                 left: 16,
                 right: 16,
@@ -314,23 +356,28 @@ class EventCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                        PopupMenuButton<String>(
-                          icon: const Icon(Icons.more_vert, color: Colors.white),
-                          onSelected: (String choice) {
-                            if (choice == 'Edit') {
-                              onEdit();
-                            } else if (choice == 'Delete') {
-                              onDelete();
-                            }
-                          },
-                          itemBuilder: (BuildContext context) => [
-                            const PopupMenuItem(
-                              value: 'Edit',
-                              child: Text('Edit'),
-                            ),
-                            const PopupMenuItem(
-                              value: 'Delete',
-                              child: Text('Delete'),
+                        Row(
+                          children: [
+                            PopupMenuButton<String>(
+                              icon: const Icon(Icons.more_vert,
+                                  color: Colors.white),
+                              onSelected: (String choice) {
+                                if (choice == 'Edit') {
+                                  onEdit();
+                                } else if (choice == 'Delete') {
+                                  onDelete();
+                                }
+                              },
+                              itemBuilder: (BuildContext context) => [
+                                const PopupMenuItem(
+                                  value: 'Edit',
+                                  child: Text('Edit'),
+                                ),
+                                const PopupMenuItem(
+                                  value: 'Delete',
+                                  child: Text('Delete'),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -339,7 +386,8 @@ class EventCard extends StatelessWidget {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        Icon(event.category.icon, color: Colors.white, size: 16),
+                        Icon(event.category.icon,
+                            color: Colors.white, size: 16),
                         const SizedBox(width: 8),
                         Text(
                           event.location,

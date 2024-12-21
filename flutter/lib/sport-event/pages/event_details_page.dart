@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:week3/sport-event/widgets/detailCard.dart';
+import 'package:week3/sport-event/widgets/detailRow.dart';
 import '../models/event.dart';
 
 class EventDetailsPage extends StatelessWidget {
@@ -9,123 +11,145 @@ class EventDetailsPage extends StatelessWidget {
   const EventDetailsPage({required this.event, super.key});
 
   Widget _buildImage(Event event) {
+    Widget imageWidget;
     if (event.imageBytes != null) {
-      return Image.memory(event.imageBytes!,
-          width: double.infinity, height: 200, fit: BoxFit.cover);
+      imageWidget = Image.memory(event.imageBytes!,
+          width: double.infinity, height: 300, fit: BoxFit.cover);
     } else if (event.imagePath.startsWith('/images')) {
-      return Image.asset(event.imagePath,
-          width: double.infinity, height: 200, fit: BoxFit.cover);
+      imageWidget = Image.asset(event.imagePath,
+          width: double.infinity, height: 300, fit: BoxFit.cover);
     } else if (event.imagePath.isNotEmpty) {
-      return Image.file(File(event.imagePath),
-          width: double.infinity, height: 200, fit: BoxFit.cover);
+      imageWidget = Image.file(File(event.imagePath),
+          width: double.infinity, height: 300, fit: BoxFit.cover);
     } else {
-      return Container(
-        height: 200,
+      imageWidget = Container(
+        height: 300,
         color: Colors.grey[300],
         child: const Icon(Icons.event, size: 80, color: Colors.grey),
       );
     }
+
+    return Stack(
+      children: [
+        imageWidget,
+        Container(
+          height: 300,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+              colors: [
+                Colors.black.withOpacity(0.8),
+                Colors.transparent,
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final formatter = DateFormat.yMMMd();
     return Scaffold(
-      appBar: AppBar(
-        title: Text(event.name),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Event Image Section
-            _buildImage(event),
-
-            // Event Details Section
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      backgroundColor: Colors.grey[100],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
                 children: [
-                  // Event Name
-                  Text(
-                    event.name,
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineMedium
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 12),
-
-                  // Description
-                  Row(
-                    children: [
-                      const Icon(Icons.description, color: Colors.blueAccent),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          event.description,
-                          style: Theme.of(context).textTheme.bodyLarge,
+                  _buildImage(event),
+                  Positioned(
+                    top: 16,
+                    left: 16,
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
+                        child: const Icon(Icons.arrow_back, color: Colors.black),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Category
-                  Row(
-                    children: [
-                      Icon(event.category.icon, color: Colors.orangeAccent),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Category: ${event.category.label}',
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Date and Time
-                  Row(
-                    children: [
-                      const Icon(Icons.calendar_today, color: Colors.green),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Date: ${formatter.format(event.date)}',
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      const Icon(Icons.access_time, color: Colors.redAccent),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Time: ${event.time}',
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Location
-                  Row(
-                    children: [
-                      const Icon(Icons.location_on, color: Colors.purpleAccent),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          'Location: ${event.location}',
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ],
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      event.name,
+                      style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    buildDetailCard(
+                      context,
+                      [
+                        buildDetailRow(
+                          Icons.description,
+                          'Description',
+                          event.description,
+                          Colors.deepOrange,
+                        ),
+                        const SizedBox(height: 16),
+                        buildDetailRow(
+                          event.category.icon,
+                          'Category',
+                          event.category.label,
+                          Colors.deepOrange,
+                        ),
+                        const SizedBox(height: 16),
+                        buildDetailRow(
+                          Icons.calendar_today,
+                          'Date',
+                          formatter.format(event.date),
+                          Colors.deepOrange,
+                        ),
+                        const SizedBox(height: 16),
+                        buildDetailRow(
+                          Icons.access_time,
+                          'Time',
+                          event.time,
+                          Colors.deepOrange,
+                        ),
+                        const SizedBox(height: 16),
+                        buildDetailRow(
+                          Icons.price_change,
+                          'Price',
+                          event.price,
+                          Colors.deepOrange,
+                        ),
+                        const SizedBox(height: 16),
+                        buildDetailRow(
+                          Icons.location_on,
+                          'Location',
+                          event.location,
+                          Colors.deepOrange,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
