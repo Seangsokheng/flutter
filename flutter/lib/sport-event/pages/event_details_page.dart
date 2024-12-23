@@ -103,13 +103,6 @@ class EventDetailsPage extends StatelessWidget {
                       context,
                       [
                         buildDetailRow(
-                          Icons.description,
-                          'Description',
-                          event.description,
-                          Colors.deepOrange,
-                        ),
-                        const SizedBox(height: 16),
-                        buildDetailRow(
                           event.category.icon,
                           'Category',
                           event.category.label,
@@ -141,6 +134,13 @@ class EventDetailsPage extends StatelessWidget {
                           Icons.location_on,
                           'Location',
                           event.location,
+                          Colors.deepOrange,
+                        ),
+                        const SizedBox(height: 16),
+                        buildDetailRow(
+                          Icons.description,
+                          'Description',
+                          event.description,
                           Colors.deepOrange,
                         ),
                       ],

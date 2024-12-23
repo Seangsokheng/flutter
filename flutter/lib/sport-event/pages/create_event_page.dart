@@ -55,7 +55,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
         _imageBytes = item.imageBytes;
       } else {
         if (item.imagePath.isNotEmpty &&
-            !item.imagePath.startsWith('/images')) {
+            item.imagePath.startsWith('/images')) {
           try {
             _image = File(item.imagePath);
           } catch (e) {
