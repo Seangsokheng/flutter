@@ -10,6 +10,7 @@ class SportsEventApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Sports Event App',
       home: HomePage(),
     );
